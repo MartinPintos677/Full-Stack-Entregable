@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { format } from 'date-fns'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import Header from '../Components/Header'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -251,16 +251,21 @@ const UserDetails: React.FC = () => {
                       <h5>
                         Usuario {(currentPage - 1) * usersPerPage + index + 1}
                       </h5>
-                      <div className="d-flex">
-                        <img
-                          src={user.avatar}
-                          alt="Avatar"
-                          className="avatar-image-details mt-3"
-                        />
-                        <p className="username-details ms-4 fs-5">
-                          {user.username}
-                        </p>
-                      </div>
+                      <Link
+                        to={`/user/${user.username}/userslist/${user.username}`}
+                        target="_blank"
+                      >
+                        <div className="d-flex">
+                          <img
+                            src={user.avatar}
+                            alt="Avatar"
+                            className="avatar-image-details mt-3"
+                          />
+                          <p className="username-details ms-4 fs-5">
+                            {user.username}
+                          </p>
+                        </div>
+                      </Link>
                       <hr className="mt-3 text-light" />
                     </div>
                   ))}
