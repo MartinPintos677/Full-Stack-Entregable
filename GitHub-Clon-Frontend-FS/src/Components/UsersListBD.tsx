@@ -11,8 +11,6 @@ import Header from '../Components/Header'
 import { useAuth } from '../Auth/AuthContext'
 import '../Css/ReposListBD.css'
 
-// Agregar BTN de Usuarios Buscados
-
 interface SearchUser {
   _id: string
   search: string
