@@ -33,7 +33,7 @@ const LoginForm = () => {
           console.error('Error de inicio de sesión')
         }
       } catch (error) {
-        setError('Credenciales incorrectas')
+        setError('Error de red')
         console.error('Error de red:', error)
       }
     }
