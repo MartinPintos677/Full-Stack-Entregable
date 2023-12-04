@@ -28,13 +28,19 @@ const LoginForm = () => {
           const token = response.data.token
           login(username, token)
           navigate(`/user/${username}`)
-        } else {
-          setError('Credenciales incorrectas')
-          console.error('Error de inicio de sesión')
         }
-      } catch (error) {
-        setError('Error de red')
-        console.error('Error de red:', error)
+      } catch (error: any) {
+        if (error.response && error.response.status === 401) {
+          setError('Credenciales incorrectas')
+          console.error(
+            'Error de inicio de sesión:',
+            error.response.status,
+            error.response.data.error
+          )
+        } else {
+          setError('Error de red')
+          console.error('Error de red:', error)
+        }
       }
     }
   }
