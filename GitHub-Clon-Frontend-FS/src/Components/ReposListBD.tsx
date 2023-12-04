@@ -116,7 +116,7 @@ const RepositoryList: React.FC = () => {
                     {search.search}
                   </Link>
                   <button
-                    className="ms-4 btn-delete"
+                    className="btn-delete"
                     onClick={() => handleDeleteSearch(search._id)}
                   >
                     <FontAwesomeIcon icon={faTrashCan} className="" />
