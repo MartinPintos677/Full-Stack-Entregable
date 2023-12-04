@@ -14,7 +14,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from '../Auth/AuthContext'
 import axios from 'axios'
-import '../Css/RepoDetails.css'
+import '../Css/RepoUserDetails.css'
 
 interface Repository {
   _id: string

@@ -9,7 +9,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Header from '../Components/Header'
 import { useAuth } from '../Auth/AuthContext'
-import '../Css/ReposListBD.css'
+import '../Css/ReposUsersListBD.css'
 
 interface SearchRepository {
   _id: string
