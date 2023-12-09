@@ -8,6 +8,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Header from '../Components/Header'
+import DeleteModal from '../Components/DeleteModal'
 import { useAuth } from '../Auth/AuthContext'
 import '../Css/ReposUsersListBD.css'
 
@@ -17,6 +18,8 @@ interface SearchRepository {
 }
 
 const RepositoryList: React.FC = () => {
+  const [selectedSearchId, setSelectedSearchId] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [searches, setSearches] = useState<SearchRepository[]>([])
   const { state } = useAuth()
   const navigate = useNavigate()
@@ -42,15 +45,39 @@ const RepositoryList: React.FC = () => {
   }, [state.token])
 
   const handleDeleteSearch = async (id: string) => {
+    setSelectedSearchId(id)
+    setIsModalOpen(true)
+  }
+
+  const handleCancelDelete = () => {
+    setSelectedSearchId(null)
+    setIsModalOpen(false)
+  }
+
+  const handleConfirmDelete = async () => {
     try {
-      await axios.delete(`http://localhost:3000/searchrepos/${id}`, {
-        headers: {
-          Authorization: `${state.token}`
+      if (!selectedSearchId) {
+        console.error('No se ha seleccionado ninguna búsqueda para eliminar')
+        return
+      }
+
+      await axios.delete(
+        `http://localhost:3000/searchrepos/${selectedSearchId}`,
+        {
+          headers: {
+            Authorization: `${state.token}`
+          }
         }
-      })
+      )
+
       // Actualiza la lista de búsquedas después de eliminar
-      const updatedSearches = searches.filter(search => search._id !== id)
+      const updatedSearches = searches.filter(
+        search => search._id !== selectedSearchId
+      )
       setSearches(updatedSearches)
+
+      setIsModalOpen(false)
+      setSelectedSearchId(null) // Limpia el id seleccionado después de la confirmación
     } catch (error) {
       console.error('Error al eliminar la búsqueda de repositorios', error)
     }
@@ -131,6 +158,11 @@ const RepositoryList: React.FC = () => {
             <div className="line-h2"></div>
           </div>
         )}
+        <DeleteModal
+          isOpen={isModalOpen}
+          onCancel={handleCancelDelete}
+          onConfirm={handleConfirmDelete}
+        />
       </div>
     </div>
   )
