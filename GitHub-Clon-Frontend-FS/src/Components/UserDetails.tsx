@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import Header from '../Components/Header'
+import DeleteModal from '../Components/DeleteModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faHouseUser,
@@ -39,6 +40,8 @@ const UserDetails: React.FC = () => {
   const navigate = useNavigate()
   const { state } = useAuth()
   const [userData, setUserData] = useState<User | null>(null)
+  const [selectedSearchId, setSelectedSearchId] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [detailsVisible, setDetailsVisible] = useState(false)
   const [newComment, setNewComment] = useState('')
   const [currentPage, setCurrentPage] = useState<number>(1)
@@ -94,12 +97,31 @@ const UserDetails: React.FC = () => {
   }
 
   const handleDeleteUser = async () => {
+    if (userData && userData._id) {
+      setSelectedSearchId(userData._id)
+      setIsModalOpen(true)
+    }
+  }
+
+  const handleCancelDelete = () => {
+    setSelectedSearchId(null)
+    setIsModalOpen(false)
+  }
+
+  const handleConfirmDelete = async () => {
     try {
+      if (!id) {
+        console.error('No se ha seleccionado ninguna búsqueda para eliminar')
+        return
+      }
+
       await axios.delete(`http://localhost:3000/searchuser/${id}`, {
         headers: {
           Authorization: `${state.token}`
         }
       })
+      setIsModalOpen(false)
+      setSelectedSearchId(null)
       navigate(`/user/${state.username}/userslistbd`)
     } catch (error) {
       console.error('Error al eliminar el usuario', error)
@@ -288,6 +310,11 @@ const UserDetails: React.FC = () => {
             <p>Cargando detalles del usuario...</p>
           )}
         </div>
+        <DeleteModal
+          isOpen={isModalOpen}
+          onCancel={handleCancelDelete}
+          onConfirm={handleConfirmDelete}
+        />
       </div>
     </div>
   )
