@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { useParams, useNavigate } from 'react-router-dom'
 import Header from '../Components/Header'
+import DeleteModal from '../Components/DeleteModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faHouseUser,
@@ -43,6 +44,8 @@ const RepositoryDetails: React.FC = () => {
   const navigate = useNavigate()
   const { state } = useAuth()
   const [repositoryData, setRepositoryData] = useState<Repository | null>(null)
+  const [selectedSearchId, setSelectedSearchId] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [detailsVisible, setDetailsVisible] = useState(false)
   const [newComment, setNewComment] = useState('')
   const [currentPage, setCurrentPage] = useState<number>(1)
@@ -98,12 +101,31 @@ const RepositoryDetails: React.FC = () => {
   }
 
   const handleDeleteRepository = async () => {
+    if (repositoryData && repositoryData._id) {
+      setSelectedSearchId(repositoryData._id)
+      setIsModalOpen(true)
+    }
+  }
+
+  const handleCancelDelete = () => {
+    setSelectedSearchId(null)
+    setIsModalOpen(false)
+  }
+
+  const handleConfirmDelete = async () => {
     try {
+      if (!id) {
+        console.error('No se ha seleccionado ninguna búsqueda para eliminar')
+        return
+      }
+
       await axios.delete(`http://localhost:3000/searchrepos/${id}`, {
         headers: {
           Authorization: `${state.token}`
         }
       })
+      setIsModalOpen(false)
+      setSelectedSearchId(null)
       navigate(`/user/${state.username}/reposlistbd`)
     } catch (error) {
       console.error('Error al eliminar el repositorio', error)
@@ -312,6 +334,11 @@ const RepositoryDetails: React.FC = () => {
             <p>Cargando detalles del repositorio...</p>
           )}
         </div>
+        <DeleteModal
+          isOpen={isModalOpen}
+          onCancel={handleCancelDelete}
+          onConfirm={handleConfirmDelete}
+        />
       </div>
     </div>
   )
