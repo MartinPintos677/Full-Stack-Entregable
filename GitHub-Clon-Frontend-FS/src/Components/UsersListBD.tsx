@@ -8,6 +8,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Header from '../Components/Header'
+import DeleteModal from '../Components/DeleteModal'
 import { useAuth } from '../Auth/AuthContext'
 import '../Css/ReposUsersListBD.css'
 
@@ -18,6 +19,8 @@ interface SearchUser {
 
 const UserList: React.FC = () => {
   const [searches, setSearches] = useState<SearchUser[]>([])
+  const [selectedSearchId, setSelectedSearchId] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const { state } = useAuth()
   const navigate = useNavigate()
 
@@ -42,15 +45,38 @@ const UserList: React.FC = () => {
   }, [state.token])
 
   const handleDeleteSearch = async (id: string) => {
+    setSelectedSearchId(id)
+    setIsModalOpen(true)
+  }
+
+  const handleCancelDelete = () => {
+    setSelectedSearchId(null)
+    setIsModalOpen(false)
+  }
+
+  const handleConfirmDelete = async () => {
     try {
-      await axios.delete(`http://localhost:3000/searchuser/${id}`, {
-        headers: {
-          Authorization: `${state.token}`
+      if (!selectedSearchId) {
+        console.error('No se ha seleccionado ninguna búsqueda para eliminar')
+        return
+      }
+
+      await axios.delete(
+        `http://localhost:3000/searchuser/${selectedSearchId}`,
+        {
+          headers: {
+            Authorization: `${state.token}`
+          }
         }
-      })
+      )
       // Actualiza la lista de búsquedas después de eliminar
-      const updatedSearches = searches.filter(search => search._id !== id)
+      const updatedSearches = searches.filter(
+        search => search._id !== selectedSearchId
+      )
       setSearches(updatedSearches)
+
+      setIsModalOpen(false)
+      setSelectedSearchId(null)
     } catch (error) {
       console.error('Error al eliminar la búsqueda de usuarios', error)
     }
@@ -132,6 +158,11 @@ const UserList: React.FC = () => {
           </div>
         )}
       </div>
+      <DeleteModal
+        isOpen={isModalOpen}
+        onCancel={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   )
 }
