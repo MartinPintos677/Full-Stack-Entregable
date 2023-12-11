@@ -119,11 +119,14 @@ const RepositoryDetails: React.FC = () => {
         return
       }
 
-      await axios.delete(`http://localhost:3000/searchrepos/${id}`, {
-        headers: {
-          Authorization: `${state.token}`
+      await axios.delete(
+        `http://localhost:3000/searchrepos/${selectedSearchId}`,
+        {
+          headers: {
+            Authorization: `${state.token}`
+          }
         }
-      })
+      )
       setIsModalOpen(false)
       setSelectedSearchId(null)
       navigate(`/user/${state.username}/reposlistbd`)

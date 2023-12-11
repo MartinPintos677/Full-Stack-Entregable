@@ -115,11 +115,14 @@ const UserDetails: React.FC = () => {
         return
       }
 
-      await axios.delete(`http://localhost:3000/searchuser/${id}`, {
-        headers: {
-          Authorization: `${state.token}`
+      await axios.delete(
+        `http://localhost:3000/searchuser/${selectedSearchId}`,
+        {
+          headers: {
+            Authorization: `${state.token}`
+          }
         }
-      })
+      )
       setIsModalOpen(false)
       setSelectedSearchId(null)
       navigate(`/user/${state.username}/userslistbd`)
