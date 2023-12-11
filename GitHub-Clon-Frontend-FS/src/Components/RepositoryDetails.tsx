@@ -114,7 +114,7 @@ const RepositoryDetails: React.FC = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      if (!id) {
+      if (!selectedSearchId) {
         console.error('No se ha seleccionado ninguna búsqueda para eliminar')
         return
       }
